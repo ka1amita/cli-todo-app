@@ -10,19 +10,18 @@ public class Main {
     }
     // list tasks
     if (args[0].equals("-l")) {
-      tasks.printTasks();
+      tasks.listTasks();
       return;
     }
-
     // add new task(s)
     if (args[0].equals("-a")) {
       for (int i = 1; i < args.length; i++) {
-        new Task(args[i]);
+        Task task = new Task(args[i]);
+        tasks.add(task);
       }
+      tasks.writeToFile("testOut.txt");
       return;
     }
-
-
   }
 
   private static void printUsage() {

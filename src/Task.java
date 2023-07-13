@@ -11,8 +11,11 @@ public class Task {
     this.done = done;
   }
 
-  @Override
-  public String toString() {
+  public String getName() {
     return name;
+  }
+
+  public boolean isDone() {
+    return done;
   }
 }
