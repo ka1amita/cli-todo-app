@@ -57,7 +57,11 @@ public class Main {
     }
     // check task(s)
     if (args[0].equals("-c")) {
-      callCheck(args, tasks);
+      try {
+        callCheck(args, tasks);
+      } catch (Exception e) {
+        System.out.println(String.format(e.getMessage(),"check"));
+      }
       return;
     }
     // add new task(s)
@@ -67,18 +71,18 @@ public class Main {
     }
   }
 
-  private static void callCheck(String[] args, Tasks tasks) {
+  private static void callCheck(String[] args, Tasks tasks) throws TodoException.TodoIndexOutOfBoundsException {
     if (args.length == 1) {
-      System.out.println("Unable to remove: no index provided");
+      throw new TodoException.TodoNullPointerException();
     } else if (args.length > 1) {
       try {
         for (int i = 1; i < args.length; i++) {
           tasks.getTask(Integer.parseInt(args[i]) - 1).setDone();
         }
       } catch (IndexOutOfBoundsException e) {
-        System.out.println("Unable to check: index is out of bound");
+        throw new TodoException.TodoIndexOutOfBoundsException();
       } catch (NumberFormatException e) {
-        System.out.println("Unable to check: index is not a number");
+        throw new TodoException.TodoNumberFormatException();
       }
       tasks.writeToFile(outputFile);
     }
