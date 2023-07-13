@@ -2,11 +2,11 @@ import java.util.HashMap;
 
 public class Main {
 
-  public static final HashMap<String, String> COMMANDS = new HashMap<>() {{
+  public static final HashMap<String, String> MODES = new HashMap<>() {{
     put("-l", "list");
     put("--list", "list");
-    put("-la", "-listall");
-    put("--listall", "-listall");
+    put("-la", "listall");
+    put("--listall", "listall");
     put("-r", "remove");
     put("--remove", "remove");
     put("-c", "check");
@@ -17,63 +17,67 @@ public class Main {
   private static final String outputFile = "output.txt";
   private static final String inputFile = "test.txt";
 
-
   public static void main(String[] args) {
     // read tasks from file into Tasks object
     Tasks tasks = new Tasks(inputFile); // TODO read from config
 
-    // print usage
-    if (args.length == 0) {
+    String mode;
+
+    try {
+      mode = args[0];
+    } catch (ArrayIndexOutOfBoundsException e) {
+    // print usage if (args.length == 0)
       printUsage();
       return;
     }
+
     // arg validation
     // TODO https://stackoverflow.com/questions/4480334/how-to-call-a-method-stored-in-a-hashmap-java
-    if (!COMMANDS.containsKey(args[0])) {
+    if (!MODES.containsKey(mode)) {
       System.out.println("Unsupported argument");
       System.out.println();
       printUsage();
       return;
     }
     // parse long arg to short arg
-    args[0] = COMMANDS.get(args[0]);
+    mode = MODES.get(mode);
 
     // list undone tasks
-    if (args[0].equals("list")) {
+    if (mode.equals("list")) {
       tasks.listTasks(false);
       return;
     }
 
     // list all tasks
-    if (args[0].equals("listall")) {
+    if (mode.equals("listall")) {
       tasks.listTasks();
       return;
     }
 
     // remove task(s)
-    if (args[0].equals("remove")) {
+    if (mode.equals("remove")) {
       try {
         callRemove(args, tasks);
       } catch (Exception e) {
-        System.out.println(String.format(e.getMessage(),"remove"));
+        System.out.println(String.format(e.getMessage(),mode));
       }
       return;
     }
     // check task(s)
-    if (args[0].equals("check")) {
+    if (mode.equals("check")) {
       try {
         callCheck(args, tasks);
       } catch (Exception e) {
-        System.out.println(String.format(e.getMessage(),"check"));
+        System.out.println(String.format(e.getMessage(),mode));
       }
       return;
     }
     // add new task(s)
-    if (args[0].equals("add")) {
+    if (mode.equals("add")) {
       try {
         callAdd(args, tasks);
       } catch (Exception e) {
-        System.out.println(String.format(e.getMessage(),"add"));
+        System.out.println(String.format(e.getMessage(),mode));
       }
       return;
     }
