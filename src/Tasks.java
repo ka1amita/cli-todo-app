@@ -23,6 +23,14 @@ public class Tasks {
     tasks = new ArrayList<>();
   }
 
+  public List<Task> getTasks() {
+    return tasks;
+  }
+
+  public Task getTask(int i) {
+    return tasks.get(i);
+  }
+
   public void listTasks() {
     int i = 1;
     if (tasks.size() == 0) {
@@ -30,7 +38,7 @@ public class Tasks {
       return;
     }
     for (Task task : tasks) {
-      System.out.println(i + " - " + task.getName());
+      System.out.println(i + " - " + task.toString());
       i++;
     }
   }
@@ -57,7 +65,7 @@ public class Tasks {
   }
 
   public void writeToFile(String file) {
-    Path path = Paths.get("output.txt");
+    Path path = Paths.get(file);
     List<String> content = new ArrayList<>();
 
     for (Task task : tasks) {
@@ -67,7 +75,7 @@ public class Tasks {
     try {
       Files.write(path, content);
     } catch (IOException e) {
-      System.out.println("can't write");
+      System.out.println("can't write to file");
       return;
     }
   }

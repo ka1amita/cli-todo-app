@@ -6,6 +6,7 @@ public class Task {
     this.name = name;
     this.done = false;
   }
+
   public Task(String name, boolean done) {
     this.name = name;
     this.done = done;
@@ -17,5 +18,22 @@ public class Task {
 
   public boolean isDone() {
     return done;
+  }
+
+  @Override
+  public String toString() {
+    String string = "";
+    if (this.isDone()) {
+      string += "[x]";
+    } else {
+      string += "[ ]";
+    }
+    string += " " + this.getName();
+    return string;
+  }
+
+
+  public void setDone() {
+    done = true;
   }
 }

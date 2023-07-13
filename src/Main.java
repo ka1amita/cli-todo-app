@@ -13,13 +13,23 @@ public class Main {
       tasks.listTasks();
       return;
     }
+
+    if (args[0].equals("-c")) {
+      for (int i = 1; i < args.length; i++) {
+        tasks.getTask(Integer.parseInt(args[i]) - 1).setDone();
+      }
+      tasks.writeToFile("output.txt");
+      return;
+    }
+
+
     // add new task(s)
     if (args[0].equals("-a")) {
       for (int i = 1; i < args.length; i++) {
         Task task = new Task(args[i]);
         tasks.add(task);
       }
-      tasks.writeToFile("testOut.txt");
+      tasks.writeToFile("output.txt");
       return;
     }
   }
