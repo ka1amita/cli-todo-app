@@ -14,23 +14,13 @@ public class Main {
     put("-a", "-a");
     put("--add", "-a");
   }};
+  private static final String outputFile = "output.txt";
+  private static final String inputFile = "test.txt";
 
-  // TODO https://stackoverflow.com/questions/4480334/how-to-call-a-method-stored-in-a-hashmap-java
-  //  class Test {
-  //     public static void main(String[] args) throws Exception {
-  //         Map<Character, Runnable> commands = new HashMap<>();
-  //         // Populate commands map
-  //         commands.put('h', () -> System.out.println("Help"));
-  //         commands.put('t', () -> System.out.println("Teleport"));
-  //         // Invoke some command
-  //         char cmd = 't';
-  //         commands.get(cmd).run();   // Prints "Teleport"
-  //     }
-  // }
 
   public static void main(String[] args) {
     // read tasks from file into Tasks object
-    Tasks tasks = new Tasks("test.txt"); // TODO read from config
+    Tasks tasks = new Tasks(inputFile); // TODO read from config
 
     // print usage
     if (args.length == 0) {
@@ -38,6 +28,7 @@ public class Main {
       return;
     }
     // arg validation
+    // TODO https://stackoverflow.com/questions/4480334/how-to-call-a-method-stored-in-a-hashmap-java
     if (!COMMANDS.containsKey(args[0])) {
       System.out.println("Unsupported argument");
       System.out.println();
@@ -60,58 +51,72 @@ public class Main {
     }
 
     // remove task(s)
-    if (args[0].equals("-r") && args.length == 1) {
-      System.out.println("Unable to remove: no index provided");
+    if (args[0].equals("-r")) {
+      callRemove(args, tasks);
       return;
     }
-    if (args[0].equals("-r") && args.length > 1) {
-      // TODO handle on the remove() level?
+    // check task(s)
+    if (args[0].equals("-c")) {
+      callCheck(args, tasks);
+      return;
+    }
+    // add new task(s)
+    if (args[0].equals("-a")) {
+      callAdd(args, tasks);
+      return;
+    }
+  }
+
+  private static void callCheck(String[] args, Tasks tasks) {
+    if (args.length == 1) {
+      System.out.println("Unable to remove: no index provided");
+    } else if (args.length > 1) {
+      try {
+        for (int i = 1; i < args.length; i++) {
+          tasks.getTask(Integer.parseInt(args[i]) - 1).setDone();
+        }
+      } catch (IndexOutOfBoundsException e) {
+        System.out.println("Unable to check: index is out of bound");
+      } catch (NumberFormatException e) {
+        System.out.println("Unable to check: index is not a number");
+      }
+      tasks.writeToFile(outputFile);
+    }
+  }
+
+  private static void callAdd(String[] args, Tasks tasks) {
+    if (args.length == 1) {
+      System.out.println("Unable to add: no todo provided");
+    } else if (args.length > 1) {
+      for (int i = 1; i < args.length; i++) {
+        Task task = new Task(args[i]);
+        tasks.add(task);
+      }
+      tasks.writeToFile(outputFile);
+    }
+  }
+
+  private static void callRemove(String[] args, Tasks tasks) {
+    if (args.length == 1) {
+      System.out.println("Unable to remove: no index provided");
+    } else if (args.length > 1) {
       try {
         for (int i = 1; i < args.length; i++) {
           tasks.remove(Integer.parseInt(args[i]) - 1);
         }
-        tasks.writeToFile("output.txt");
       } catch (IndexOutOfBoundsException e) {
         System.out.println("Unable to remove: index is out of bound");
       } catch (NumberFormatException e) {
         System.out.println("Unable to remove: index is not a number");
       }
-      return;
-    }
-    // check task(s)
-    if (args[0].equals("-c")) {
-      for (int i = 1; i < args.length; i++) {
-        tasks.getTask(Integer.parseInt(args[i]) - 1).setDone();
-      }
-      tasks.writeToFile("output.txt");
-      return;
-    }
-    // add new task(s)
-    if (args[0].equals("-a") && args.length == 1) {
-      System.out.println("Unable to add: no index provided");
-      return;
-    }
-
-    if (args[0].equals("-a") && args.length > 1) {
-      for (int i = 1; i < args.length; i++) {
-        Task task = new Task(args[i]);
-        tasks.add(task);
-      }
-      tasks.writeToFile("output.txt");
-      return;
+      tasks.writeToFile(outputFile);
     }
   }
 
   private static void printUsage() {
     System.out.println(
-        "Command Line Todo application\n" +
-            "=============================\n" +
-            "\n" +
-            "Command line arguments:\n" +
-            "    -l   Lists all the tasks\n" +
-            "    -a   Adds a new task\n" +
-            "    -r   Removes an task\n" +
-            "    -c   Completes an task"
-    );
+        "Command Line Todo application\n" + "=============================\n" + "\n" + "Command line arguments:\n" +
+            "    -l   Lists all the tasks\n" + "    -a   Adds a new task\n" + "    -r   Removes an task\n" +
+            "    -c   Completes an task");
   }
 }
