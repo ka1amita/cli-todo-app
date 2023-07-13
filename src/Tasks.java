@@ -67,11 +67,11 @@ public class Tasks {
     tasks.add(task);
   }
 
-  public void remove(int i) {
+  public void remove(int i) throws TodoException.TodoIndexOutOfBoundsException {
     try {
       tasks.remove(i);
-    } catch (Exception e) {
-      System.out.println("Unable to remove: index is out of bound");
+    } catch (Exception IndexOutOfBoundsException) {
+      throw new TodoException.TodoIndexOutOfBoundsException();
     }
   }
 

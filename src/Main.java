@@ -3,16 +3,16 @@ import java.util.HashMap;
 public class Main {
 
   public static final HashMap<String, String> COMMANDS = new HashMap<>() {{
-    put("-l", "-l");
-    put("--list", "-l");
-    put("-la", "-l");
-    put("--listall", "-la");
-    put("-r", "-r");
-    put("--remove", "-r");
-    put("-c", "-c");
-    put("--check", "-c");
-    put("-a", "-a");
-    put("--add", "-a");
+    put("-l", "list");
+    put("--list", "list");
+    put("-la", "-listall");
+    put("--listall", "-listall");
+    put("-r", "remove");
+    put("--remove", "remove");
+    put("-c", "check");
+    put("--check", "check");
+    put("-a", "add");
+    put("--add", "add");
   }};
   private static final String outputFile = "output.txt";
   private static final String inputFile = "test.txt";
@@ -39,24 +39,28 @@ public class Main {
     args[0] = COMMANDS.get(args[0]);
 
     // list undone tasks
-    if (args[0].equals("-l")) {
+    if (args[0].equals("list")) {
       tasks.listTasks(false);
       return;
     }
 
     // list all tasks
-    if (args[0].equals("-la")) {
+    if (args[0].equals("listall")) {
       tasks.listTasks();
       return;
     }
 
     // remove task(s)
-    if (args[0].equals("-r")) {
-      callRemove(args, tasks);
+    if (args[0].equals("remove")) {
+      try {
+        callRemove(args, tasks);
+      } catch (Exception e) {
+        System.out.println(String.format(e.getMessage(),"remove"));
+      }
       return;
     }
     // check task(s)
-    if (args[0].equals("-c")) {
+    if (args[0].equals("check")) {
       try {
         callCheck(args, tasks);
       } catch (Exception e) {
@@ -65,8 +69,12 @@ public class Main {
       return;
     }
     // add new task(s)
-    if (args[0].equals("-a")) {
-      callAdd(args, tasks);
+    if (args[0].equals("add")) {
+      try {
+        callAdd(args, tasks);
+      } catch (Exception e) {
+        System.out.println(String.format(e.getMessage(),"add"));
+      }
       return;
     }
   }
@@ -90,7 +98,7 @@ public class Main {
 
   private static void callAdd(String[] args, Tasks tasks) {
     if (args.length == 1) {
-      System.out.println("Unable to add: no todo provided");
+      throw new TodoException.TodoNullPointerException();
     } else if (args.length > 1) {
       for (int i = 1; i < args.length; i++) {
         Task task = new Task(args[i]);
@@ -102,16 +110,16 @@ public class Main {
 
   private static void callRemove(String[] args, Tasks tasks) {
     if (args.length == 1) {
-      System.out.println("Unable to remove: no index provided");
+      throw new TodoException.TodoNullPointerException();
     } else if (args.length > 1) {
       try {
         for (int i = 1; i < args.length; i++) {
           tasks.remove(Integer.parseInt(args[i]) - 1);
         }
       } catch (IndexOutOfBoundsException e) {
-        System.out.println("Unable to remove: index is out of bound");
+        throw new TodoException.TodoIndexOutOfBoundsException();
       } catch (NumberFormatException e) {
-        System.out.println("Unable to remove: index is not a number");
+        throw new TodoException.TodoNumberFormatException();
       }
       tasks.writeToFile(outputFile);
     }
