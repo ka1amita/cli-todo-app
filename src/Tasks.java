@@ -47,6 +47,10 @@ public class Tasks {
     tasks.add(task);
   }
 
+  public void remove(int i) {
+    tasks.remove(i);
+  }
+
   public void readFromFile(String file) {
 
     Path path = Paths.get(file);
@@ -79,4 +83,5 @@ public class Tasks {
       return;
     }
   }
+
 }
