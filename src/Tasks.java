@@ -43,7 +43,8 @@ public class Tasks {
       System.exit(1);
     }
     for (String line : content) {
-      this.tasks.add(new Task(line.split(delimiter)[0], Boolean.parseBoolean(line.split(delimiter)[1])));
+      String[] split = line.split(delimiter);
+      this.tasks.add(new Task(split[0], Boolean.parseBoolean(split[1])));
     }
   }
 }

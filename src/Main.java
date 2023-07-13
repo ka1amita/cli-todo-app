@@ -1,16 +1,17 @@
 public class Main {
   public static void main(String[] args) {
     // read tasks from file into Tasks object
-    Tasks tasks = new Tasks("tasks.txt");
-    // lad tasks from file
+    Tasks tasks = new Tasks("test.txt");
 
     // print usage
     if (args.length == 0) {
       printUsage();
+      return;
     }
     // list tasks
     if (args[0].equals("-l")) {
       tasks.printTasks();
+      return;
     }
 
     // add new task(s)
@@ -18,6 +19,7 @@ public class Main {
       for (int i = 1; i < args.length; i++) {
         new Task(args[i]);
       }
+      return;
     }
 
 
