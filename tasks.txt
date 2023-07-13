@@ -1,3 +1,0 @@
-Walk the dog,true
-Buy milk,true
-Do homework,true
