@@ -38,6 +38,18 @@ public class Main {
       tasks.writeToFile("output.txt");
       return;
     }
+    if (args.length != 0) {
+      // TODO error.log
+      // try {
+      //   throw new IllegalArgumentException("Unsupported argument");
+      // } catch (IllegalArgumentException e) {
+      //   System.out.println(e.getMessage());
+      // }
+      System.out.println("Unsupported argument");
+      System.out.println();
+      printUsage();
+      return;
+    }
   }
 
   private static void printUsage() {
