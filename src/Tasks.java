@@ -32,13 +32,33 @@ public class Tasks {
   }
 
   public void listTasks() {
-    int i = 1;
-    if (tasks.size() == 0) {
-      System.out.println("No todos for today! :)");
+    if (checkNoTasks()) {
       return;
     }
+    int i = 1;
     for (Task task : tasks) {
       System.out.println(i + " - " + task.toString());
+      i++;
+    }
+  }
+
+  private boolean checkNoTasks() {
+    if (tasks.size() == 0) {
+      System.out.println("No todos for today! :)");
+      return true;
+    }
+    return false;
+  }
+
+  public void listTasks(boolean state) {
+    if (checkNoTasks()) {
+      return;
+    }
+    int i = 1;
+    for (Task task : tasks) {
+      if (task.isDone() == state) {
+        System.out.println(i + " - " + task.toString());
+      }
       i++;
     }
   }
@@ -48,7 +68,11 @@ public class Tasks {
   }
 
   public void remove(int i) {
-    tasks.remove(i);
+    try {
+      tasks.remove(i);
+    } catch (Exception e) {
+      System.out.println("Unable to remove: index is out of bound");
+    }
   }
 
   public void readFromFile(String file) {
