@@ -14,8 +14,8 @@ public class Main {
     put("-a", "add");
     put("--add", "add");
   }};
-  private static final String outputFile = "output.txt";
   private static final String inputFile = "test.txt";
+  private static final String outputFile = "output.txt";
 
   public static void main(String[] args) {
     // read tasks from file into Tasks object
@@ -39,7 +39,7 @@ public class Main {
       printUsage();
       return;
     }
-    // parse long arg to short arg
+    // decipher modes from argument
     mode = MODES.get(mode);
 
     // list undone tasks

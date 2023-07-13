@@ -42,14 +42,6 @@ public class Tasks {
     }
   }
 
-  private boolean checkNoTasks() {
-    if (tasks.size() == 0) {
-      System.out.println("No todos for today! :)");
-      return true;
-    }
-    return false;
-  }
-
   public void listTasks(boolean state) {
     if (checkNoTasks()) {
       return;
@@ -58,10 +50,19 @@ public class Tasks {
     for (Task task : tasks) {
       if (task.isDone() == state) {
         System.out.println(i + " - " + task.toString());
+        i++;
       }
-      i++;
     }
   }
+
+  private boolean checkNoTasks() {
+    if (tasks.size() == 0) {
+      System.out.println("No todos for today! :)");
+      return true;
+    }
+    return false;
+  }
+
 
   public void add(Task task) {
     tasks.add(task);
