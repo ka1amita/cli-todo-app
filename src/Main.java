@@ -75,9 +75,11 @@ public class Main {
     } else if (mode.equals("listall")) {
       tasks.listAllTasks();
     } else if (mode.equals("remove")) {
-      removeTask(args);
+      int taskId = parseSecondArgumentToTaskId(args);
+      tasks.removeTask(taskId);
     } else if (mode.equals("check")) {
-      checkTask(args);
+      int taskId = parseSecondArgumentToTaskId(args);
+      tasks.checkTask(taskId);
     } else if (mode.equals("add")) {
       addTasks(args);
     }
@@ -85,16 +87,6 @@ public class Main {
 
   static void setModeByFlag() {
     mode = MODES.get(flag);
-  }
-
-  static void removeTask(String... args) throws TodoException {
-    int taskId = parseSecondArgumentToTaskId(args);
-    tasks.removeTask(taskId);
-  }
-
-  static void checkTask(String... args) throws TodoException {
-    int taskId = parseSecondArgumentToTaskId(args);
-    tasks.checkTask(taskId);
   }
 
   static void addTasks(String... args) throws TodoException {
