@@ -1,6 +1,6 @@
 import exceptions.CantCreateTodoFile;
 import exceptions.CantWriteToFile;
-import exceptions.MissingArgument;
+import exceptions.MissingSecondArgument;
 import exceptions.TodoException;
 import exceptions.WrongTodoIndexFormat;
 import java.util.HashMap;
@@ -60,7 +60,7 @@ public class Main {
     }
   }
 
-  private static void act(String[] args) {
+  private static void act(String... args) {
     try {
       tryAct(args);
     } catch (Exception e) {
@@ -89,7 +89,7 @@ public class Main {
 
   static void addTask(String... args) throws TodoException {
     if (args.length == 1) {
-      throw new MissingArgument();
+      throw new MissingSecondArgument();
     } else {
       for (int i = 1; i < args.length; i++) {
         Task task = new Task(args[i]);
@@ -100,10 +100,6 @@ public class Main {
   }
 
   static void checkTask(String... args) throws TodoException {
-    if (args.length == 1) {
-      throw new MissingArgument();
-    }
-
     int taskId = parseSecondArgumentToTaskId(args);
     tasks.checkTask(taskId);
   }
@@ -114,6 +110,8 @@ public class Main {
       taskId = Integer.parseInt(args[1]);
     } catch (NumberFormatException e) {
       throw new WrongTodoIndexFormat();
+    } catch (IndexOutOfBoundsException e) {
+      throw new MissingSecondArgument();
     }
     return taskId;
   }
@@ -127,9 +125,6 @@ public class Main {
   }
 
   static void removeTask(String... args) throws TodoException {
-    if (args.length == 1) {
-      throw new MissingArgument();
-    }
     int taskId = parseSecondArgumentToTaskId(args);
     tasks.removeTask(taskId);
   }
