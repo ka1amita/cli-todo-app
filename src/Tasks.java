@@ -18,18 +18,30 @@ public class Tasks {
   }
 
   public Tasks(String file) throws CantCreateTodoFile {
-    readFromFile(file);
+    readFromOrCreateFile(file);
   }
 
-  private static List<String> readFile(Path path) {
+  private static List<String> readTasksFromFile(Path path) {
     List<String> content;
     try {
       content = Files.readAllLines(path);
     } catch (IOException e) {
       System.out.println("can't read from file");
       return null;
+      // TODO throw custom exception instead!
     }
     return content;
+  }
+
+  public void readFromOrCreateFile(String filename) throws CantCreateTodoFile {
+    Path path = Paths.get(filename);
+
+    if (!Files.exists(path)) {
+      System.out.println("Todo file not found, creating new file");
+      createFile(path);
+    } else {
+      readTasks(path);
+    }
   }
 
   private static void createFile(Path path) throws CantCreateTodoFile {
@@ -41,74 +53,9 @@ public class Tasks {
     System.out.println("new file created");
   }
 
-  public Task getTask(int i) throws TodoIndexOutOfBounds {
-    try {
-      return tasks.get(i - 1);
-    } catch (Exception IndexOutOfBoundsException) {
-      throw new TodoIndexOutOfBounds();
-    }
-  }
-
-  public Task getAndRemoveTask(int i) throws TodoIndexOutOfBounds {
-    Task task = getTask(i);
-    removeTask(i);
-    return task;
-  }
-
-  public void add(Task task) {
-    tasks.add(task);
-  }
-
-  public void removeTask(int taskId) throws TodoIndexOutOfBounds {
-    try {
-      tasks.remove(taskId - 1);
-    } catch (Exception IndexOutOfBoundsException) {
-      throw new TodoIndexOutOfBounds();
-    }
-  }
-
-  public void listAllTasks() {
-    StringBuilder message = new StringBuilder();
-    for (int i = 0; i < tasks.size(); i++) {
-      message.append(String.format("%d - %s\n", i + 1, tasks.get(i).toString()));
-    }
-
-    if (message.length() == 0) {
-      System.out.println(NO_TODOS_MESSAGE);
-    } else {
-      System.out.print(message);
-    }
-  }
-
-  public void listNotDoneTasks() {
-    StringBuilder message = new StringBuilder();
-    for (int i = 0; i < tasks.size(); i++) {
-      if (!tasks.get(i).isDone()) {
-        message.append(String.format("%d - %s\n", i + 1, tasks.get(i).toString()));
-      }
-    }
-
-    if (message.length() == 0) {
-      System.out.println(NO_TODOS_MESSAGE);
-    } else {
-      System.out.print(message);
-    }
-  }
-
-  public void readFromFile(String filename) throws CantCreateTodoFile {
-    Path path = Paths.get(filename);
-
-    if (!Files.exists(path)) {
-      System.out.println("Todo file not found, creating new file");
-      createFile(path);
-    } else {
-      readTasks(path);
-    }
-  }
-
   private void readTasks(Path path) {
     List<String> content;
-    content = readFile(path);
+    content = readTasksFromFile(path);
     if (content == null) {
       return;
     }
@@ -130,6 +77,60 @@ public class Tasks {
       Files.write(path, content);
     } catch (IOException e) {
       throw new CantWriteToFile();
+    }
+  }
+
+  public Task getAndRemoveTask(int i) throws TodoIndexOutOfBounds {
+    Task task = getTask(i);
+    removeTask(i);
+    return task;
+  }
+
+  public Task getTask(int i) throws TodoIndexOutOfBounds {
+    try {
+      return tasks.get(i - 1);
+    } catch (Exception IndexOutOfBoundsException) {
+      throw new TodoIndexOutOfBounds();
+    }
+  }
+
+  public void add(Task task) {
+    tasks.add(task);
+  }
+
+  public void removeTask(int taskId) throws TodoIndexOutOfBounds {
+    try {
+      tasks.remove(taskId - 1);
+    } catch (Exception IndexOutOfBoundsException) {
+      throw new TodoIndexOutOfBounds();
+    }
+  }
+
+  public void listAllTasks() {
+    StringBuilder message = new StringBuilder();
+    for (int i = 0; i < tasks.size(); i++) {
+      message.append(String.format("%d - %s\n", i + 1, tasks.get(i).toString()));
+    }
+
+    printListOrNoTodosMessage(message);
+  }
+
+  public void listNotDoneTasks() {
+    StringBuilder message = new StringBuilder();
+    for (int i = 0; i < tasks.size(); i++) {
+      if (!tasks.get(i).isDone()) {
+        message.append(String.format("%d - %s\n", i + 1, tasks.get(i).toString()));
+      }
+    }
+
+    printListOrNoTodosMessage(message);
+  }
+
+  private static void printListOrNoTodosMessage(StringBuilder message) {
+    if (message.length() == 0) {
+      System.out.println(NO_TODOS_MESSAGE);
+    } else {
+      System.out.print(message);
     }
   }
 
