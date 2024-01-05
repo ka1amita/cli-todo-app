@@ -107,8 +107,7 @@ public class Main {
     }
   }
 
-  static void checkTask(String... args)
-      throws TodoException {
+  static void checkTask(String... args) throws TodoException {
     if (args.length == 1) {
       throw new MissingArgument();
     }
@@ -146,8 +145,7 @@ public class Main {
     }
   }
 
-  static void removeTask(String... args)
-      throws TodoException {
+  static void removeTask(String... args) throws TodoException {
     if (args.length == 1) {
       throw new MissingArgument();
     }
