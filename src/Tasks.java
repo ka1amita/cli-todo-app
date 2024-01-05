@@ -90,7 +90,7 @@ public class Tasks {
     return content;
   }
 
-  public void add(Task task) {
+  public void addTask(Task task) {
     tasks.add(task);
   }
 

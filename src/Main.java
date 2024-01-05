@@ -79,7 +79,7 @@ public class Main {
     } else if (mode.equals("check")) {
         checkTask(args);
     } else if (mode.equals("add")) {
-        addTask(args);
+      addTasks(args);
     }
   }
 
@@ -87,13 +87,13 @@ public class Main {
     mode = MODES.get(flag);
   }
 
-  static void addTask(String... args) throws TodoException {
+  static void addTasks(String... args) throws TodoException {
     if (args.length == 1) {
       throw new MissingSecondArgument();
     } else {
       for (int i = 1; i < args.length; i++) {
         Task task = new Task(args[i]);
-        tasks.add(task);
+        tasks.addTask(task);
         System.out.println("\"" + task.getName() + "\" task added");
       }
     }
