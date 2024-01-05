@@ -1,3 +1,6 @@
+import exceptions.CantCreateTodoFile;
+import exceptions.CantWriteToFile;
+import exceptions.TodoIndexOutOfBounds;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,84 +10,106 @@ import java.util.List;
 
 public class Tasks {
   public static final String DELIMITER = ",";
-  List<Task> tasks;
-
+  private static final String NO_TODOS_MESSAGE = "No todos for today! :)";
+  private final List<Task> tasks = new ArrayList<>();
 
   public Tasks(List<Task> tasks) {
-    this.tasks = tasks;
+    this.tasks.addAll(tasks);
   }
 
-  public Tasks(String file) {
-    this();
-    this.readFromFile(file);
+  public Tasks(String file) throws CantCreateTodoFile {
+    readFromFile(file);
   }
 
-  public Tasks() {
-    tasks = new ArrayList<>();
-  }
-
-  public List<Task> getTasks() {
-    return tasks;
-  }
-
-  public Task getTask(int i) {
-    return tasks.get(i);
-  }
-
-  public void listTasks() {
-    if (checkNoTasks()) {
-      return;
+  private static List<String> readFile(Path path) {
+    List<String> content;
+    try {
+      content = Files.readAllLines(path);
+    } catch (IOException e) {
+      System.out.println("can't read from file");
+      return null;
     }
-    int i = 1;
-    for (Task task : tasks) {
-      System.out.println(i + " - " + task.toString());
-      i++;
-    }
+    return content;
   }
 
-  public void listTasks(boolean state) {
-    if (checkNoTasks()) {
-      return;
+  private static void createFile(Path path) throws CantCreateTodoFile {
+    try {
+      Files.createFile(path);
+    } catch (IOException e) {
+      throw new CantCreateTodoFile();
     }
-    int i = 1;
-    for (Task task : tasks) {
-      if (task.isDone() == state) {
-        System.out.println(i + " - " + task.toString());
-        i++;
-      }
+    System.out.println("new file created");
+  }
+
+  public Task getTask(int i) throws TodoIndexOutOfBounds {
+    try {
+      return tasks.get(i - 1);
+    } catch (Exception IndexOutOfBoundsException) {
+      throw new TodoIndexOutOfBounds();
     }
   }
 
-  private boolean checkNoTasks() {
-    if (tasks.size() == 0) {
-      System.out.println("No todos for today! :)");
-      return true;
-    }
-    return false;
+  public Task getAndRemoveTask(int i) throws TodoIndexOutOfBounds {
+    Task task = getTask(i);
+    removeTask(i);
+    return task;
   }
-
 
   public void add(Task task) {
     tasks.add(task);
   }
 
-  public void remove(int i) throws TodoException.TodoIndexOutOfBoundsException {
+  public void removeTask(int taskId) throws TodoIndexOutOfBounds {
     try {
-      tasks.remove(i);
+      tasks.remove(taskId - 1);
     } catch (Exception IndexOutOfBoundsException) {
-      throw new TodoException.TodoIndexOutOfBoundsException();
+      throw new TodoIndexOutOfBounds();
     }
   }
 
-  public void readFromFile(String file) {
+  public void listAllTasks() {
+    if (tasks.isEmpty()) {
+      System.out.println(NO_TODOS_MESSAGE);
+      return;
+    }
+    for (int i = 0; i < tasks.size(); i++) {
+      int taskIndex = i + 1;
+      System.out.println(taskIndex + " - " + tasks.get(i));
+    }
+  }
 
-    Path path = Paths.get(file);
+  public void listNotDoneTasks() {
+    if (tasks.isEmpty()) {
+      System.out.println(NO_TODOS_MESSAGE);
+      return;
+    }
+    boolean remainsTodo = false;
+    for (int i = 0; i < tasks.size(); i++) {
+      if (!tasks.get(i).isDone()) {
+        System.out.printf("%d - %s\n", i + 1, tasks.get(i).toString());
+        remainsTodo = true;
+      }
+    }
+    if (!remainsTodo) {
+      System.out.println(NO_TODOS_MESSAGE);
+    }
+  }
+
+  public void readFromFile(String filename) throws CantCreateTodoFile {
+    Path path = Paths.get(filename);
+
+    if (!Files.exists(path)) {
+      System.out.println("Todo file not found, creating new file");
+      createFile(path);
+    } else {
+      readTasks(path);
+    }
+  }
+
+  private void readTasks(Path path) {
     List<String> content;
-
-    try {
-      content = Files.readAllLines(path);
-    } catch (IOException e) {
-      System.out.println("can't read from file");
+    content = readFile(path);
+    if (content == null) {
       return;
     }
     for (String line : content) {
@@ -93,7 +118,7 @@ public class Tasks {
     }
   }
 
-  public void writeToFile(String file) {
+  public void writeToFile(String file) throws CantWriteToFile {
     Path path = Paths.get(file);
     List<String> content = new ArrayList<>();
 
@@ -104,9 +129,13 @@ public class Tasks {
     try {
       Files.write(path, content);
     } catch (IOException e) {
-      System.out.println("can't write to file");
-      return;
+      throw new CantWriteToFile();
     }
   }
 
+  public Task getAndCheckTask(int taskId) throws TodoIndexOutOfBounds {
+    Task task = getTask(taskId);
+    task.setDone();
+    return task;
+  }
 }

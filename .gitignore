@@ -1,8 +1,6 @@
-=======
 # Matej's edit
-test.txt
-empty.txt
-output.txt
+NOTES.md
+tasks.txt
 *.zip
 
 # General
@@ -32,7 +30,7 @@ modules.xml
 .idea/misc.xml
 *.ipr
 
-### ReSharper 
+### ReSharper
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
@@ -56,7 +54,7 @@ build/
 .env.local
 node_modules
 
-# Visual Studio 
+# Visual Studio
 *.rsuser
 *.suo
 *.user
@@ -90,4 +88,3 @@ nunit-*.xml
 
 ### Built Visual Studio Code Extensions
 *.vsix
->>>>>>> 6348c03 (init)

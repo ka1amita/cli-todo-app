@@ -1,8 +1,14 @@
+import exceptions.CantCreateTodoFile;
+import exceptions.CantWriteToFile;
+import exceptions.MissingArgument;
+import exceptions.TodoException;
+import exceptions.TodoIndexOutOfBounds;
+import exceptions.WrongTodoIndexFormat;
 import java.util.HashMap;
 
 public class Main {
 
-  public static final HashMap<String, String> MODES = new HashMap<>() {{
+  private static final HashMap<String, String> MODES = new HashMap<>() {{
     put("-l", "list");
     put("--list", "list");
     put("-la", "listall");
@@ -14,125 +20,166 @@ public class Main {
     put("-a", "add");
     put("--add", "add");
   }};
-  private static final String inputFile = "test.txt";
-  private static final String outputFile = "output.txt";
+  private static final String TASK_CHECKED_MESSAGE = "\"%s\" task checked\n";
+  private static final String TASK_REMOVED_MESSAGE = "\"%s\" task removed\n";
+  static String FILENAME = "tasks.txt";
+  private static String flag = "";
+  private static String mode = "";
+  private static Tasks tasks;
 
-  public static void main(String[] args) {
-    // read tasks from file into Tasks object
-    Tasks tasks = new Tasks(inputFile); // TODO read from config
+  public static void main(String... args) {
+    parseFlag(args);
+    if (flag.isEmpty()) {
+      printUsage();
+      return;
+    }
+    if (isInvalidFlag()) {
+      System.out.println("Unsupported argument\n");
+      printUsage();
+      return;
+    }
+    readTasksFromFile();
+    act(args);
+    writeToFile();
+  }
 
-    String mode;
-
+  static void parseFlag(String[] args) {
     try {
-      mode = args[0];
-    } catch (ArrayIndexOutOfBoundsException e) {
-    // print usage if (args.length == 0)
-      printUsage();
-      return;
+      flag = args[0];
+    } catch (ArrayIndexOutOfBoundsException ignored) {
     }
+  }
 
-    // arg validation
-    // TODO https://stackoverflow.com/questions/4480334/how-to-call-a-method-stored-in-a-hashmap-java
-    if (!MODES.containsKey(mode)) {
-      System.out.println("Unsupported argument");
-      System.out.println();
-      printUsage();
-      return;
+  static void readTasksFromFile() {
+    try {
+      tasks = new Tasks(FILENAME);
+    } catch (CantCreateTodoFile e) {
+      System.out.println(e.getMessage());
     }
-    // decipher modes from argument
-    mode = MODES.get(mode);
+  }
 
-    // list undone tasks
+  static void act(String[] args) {
+    setModeByFlag();
     if (mode.equals("list")) {
-      tasks.listTasks(false);
-      return;
-    }
-
-    // list all tasks
-    if (mode.equals("listall")) {
-      tasks.listTasks();
-      return;
-    }
-
-    // remove task(s)
-    if (mode.equals("remove")) {
+      tasks.listNotDoneTasks();
+    } else if (mode.equals("listall")) {
+      tasks.listAllTasks();
+    } else if (mode.equals("remove")) {
       try {
-        callRemove(args, tasks);
+        removeTask(args);
       } catch (Exception e) {
-        System.out.println(String.format(e.getMessage(),mode));
+        System.out.printf((e.getMessage()) + "%n", mode);
       }
-      return;
-    }
-    // check task(s)
-    if (mode.equals("check")) {
+      // TODO move to tasks.remove()
+    } else if (mode.equals("check")) {
       try {
-        callCheck(args, tasks);
+        checkTask(args);
       } catch (Exception e) {
-        System.out.println(String.format(e.getMessage(),mode));
+        System.out.printf((e.getMessage()) + "%n", mode);
       }
-      return;
-    }
-    // add new task(s)
-    if (mode.equals("add")) {
+      // TODO move to tasks.add()
+    } else if (mode.equals("add")) {
       try {
-        callAdd(args, tasks);
+        addTask(args);
       } catch (Exception e) {
-        System.out.println(String.format(e.getMessage(),mode));
+        System.out.printf((e.getMessage()) + "%n", mode);
       }
-      return;
     }
   }
 
-  private static void callCheck(String[] args, Tasks tasks) throws TodoException.TodoIndexOutOfBoundsException {
-    if (args.length == 1) {
-      throw new TodoException.TodoNullPointerException();
-    } else if (args.length > 1) {
-      try {
-        for (int i = 1; i < args.length; i++) {
-          tasks.getTask(Integer.parseInt(args[i]) - 1).setDone();
-        }
-      } catch (IndexOutOfBoundsException e) {
-        throw new TodoException.TodoIndexOutOfBoundsException();
-      } catch (NumberFormatException e) {
-        throw new TodoException.TodoNumberFormatException();
-      }
-      tasks.writeToFile(outputFile);
+  private static void writeToFile() {
+    try {
+      tasks.writeToFile(FILENAME);
+    } catch (CantWriteToFile e) {
+      System.out.println(e.getMessage());
     }
   }
 
-  private static void callAdd(String[] args, Tasks tasks) {
+  private static void setModeByFlag() {
+    mode = MODES.get(flag);
+  }
+
+  private static boolean isInvalidFlag() {
+    return !MODES.containsKey(flag);
+  }
+
+  static void addTask(String... args) throws TodoException {
     if (args.length == 1) {
-      throw new TodoException.TodoNullPointerException();
-    } else if (args.length > 1) {
+      throw new MissingArgument();
+    } else {
       for (int i = 1; i < args.length; i++) {
         Task task = new Task(args[i]);
         tasks.add(task);
+        System.out.println("\"" + task.getName() + "\" task added");
       }
-      tasks.writeToFile(outputFile);
     }
   }
 
-  private static void callRemove(String[] args, Tasks tasks) {
+  private static void checkTask(String... args)
+      throws TodoException {
     if (args.length == 1) {
-      throw new TodoException.TodoNullPointerException();
-    } else if (args.length > 1) {
-      try {
-        for (int i = 1; i < args.length; i++) {
-          tasks.remove(Integer.parseInt(args[i]) - 1);
-        }
-      } catch (IndexOutOfBoundsException e) {
-        throw new TodoException.TodoIndexOutOfBoundsException();
-      } catch (NumberFormatException e) {
-        throw new TodoException.TodoNumberFormatException();
-      }
-      tasks.writeToFile(outputFile);
+      throw new MissingArgument();
     }
+
+    int taskId = parseSecondArgument(args);
+    Task task = getTask(taskId);
+    //      tasks.writeToFile(FILENAME);
+    System.out.printf(TASK_CHECKED_MESSAGE, task.getName());
   }
 
-  private static void printUsage() {
+  private static Task getTask(int taskId) throws TodoIndexOutOfBounds {
+    Task task;
+    try {
+      task = tasks.getAndCheckTask(taskId);
+    } catch (IndexOutOfBoundsException e) {
+      throw new TodoIndexOutOfBounds();
+    }
+    return task;
+  }
+
+  private static int parseSecondArgument(String... args) throws WrongTodoIndexFormat {
+    int taskId;
+    try {
+      taskId = Integer.parseInt(args[1]);
+    } catch (NumberFormatException e) {
+      throw new WrongTodoIndexFormat();
+    }
+    return taskId;
+  }
+
+  static void removeTask(String... args)
+      throws TodoException {
+    if (args.length == 1) {
+      throw new MissingArgument();
+    }
+
+    int taskId = parseSecondArgument(args);
+    Task task = getAndRemoveTask(taskId);
+
+    //    tasks.writeToFile(FILENAME);
+    System.out.printf(TASK_REMOVED_MESSAGE, task.getName());
+  }
+
+  private static Task getAndRemoveTask(int taskId) throws TodoIndexOutOfBounds {
+    Task task;
+    try {
+      task = tasks.getAndRemoveTask(taskId);
+      } catch (IndexOutOfBoundsException e) {
+      throw new TodoIndexOutOfBounds();
+    }
+    return task;
+  }
+
+  static void printUsage() {
     System.out.println(
-        "Command Line Todo application\n" + "=============================\n" + "\n" + "Command line arguments:\n" +
-            "    -l   Lists all the tasks\n" + "    -a   Adds a new task\n" + "    -r   Removes an task\n" +
-            "    -c   Completes an task");
+        new StringBuilder().append("Command Line Todo application\n")
+            .append("=============================\n")
+            .append("\n")
+            .append("Command line arguments:\n")
+            .append(" -l  --list     Lists undone tasks\n")
+            .append(" -la --listall  Lists all tasks\n")
+            .append(" -a  --add      Adds a new task\n")
+            .append(" -r  --remove   Removes a task\n")
+            .append(" -c  --check    Completes a task"));
   }
 }

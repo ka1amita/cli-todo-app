@@ -22,6 +22,7 @@ public class Task {
 
   @Override
   public String toString() {
+    // use string builder
     String string = "";
     if (this.isDone()) {
       string += "[x]";
@@ -31,7 +32,6 @@ public class Task {
     string += " " + this.getName();
     return string;
   }
-
 
   public void setDone() {
     done = true;
