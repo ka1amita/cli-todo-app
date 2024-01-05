@@ -139,7 +139,7 @@ class MainTest {
     Main.main("-a");
 
     assertEquals("Unable to add: no index provided\n", outputStreamCaptor.toString());
-    assertEquals("single,false\n", Files.readString(tasksFile.toPath()));
+    assertEquals("", Files.readString(tasksFile.toPath()));
   }
 
   @Test
