@@ -169,15 +169,14 @@ public class Main {
   }
 
   static void printUsage() {
-    System.out.println(
-        new StringBuilder().append("Command Line Todo application\n")
-            .append("=============================\n")
-            .append("\n")
-            .append("Command line arguments:\n")
-            .append(" -l  --list     Lists undone tasks\n")
-            .append(" -la --listall  Lists all tasks\n")
-            .append(" -a  --add      Adds a new task\n")
-            .append(" -r  --remove   Removes a task\n")
-            .append(" -c  --check    Completes a task"));
+    System.out.println("Command Line Todo application\n"
+                           + "=============================\n"
+                           + "\n"
+                           + "Command line arguments:\n"
+                           + " -l  --list     Lists undone tasks\n"
+                           + " -la --listall  Lists all tasks\n"
+                           + " -a  --add      Adds a new task\n"
+                           + " -r  --remove   Removes a task\n"
+                           + " -c  --check    Completes a task");
   }
 }
