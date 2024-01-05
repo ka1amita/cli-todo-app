@@ -34,7 +34,6 @@ public class Main {
       return;
     }
     if (isInvalidFlag()) {
-      // TODO use exception
       System.out.println("Unsupported argument\n");
       printUsage();
       return;
@@ -49,6 +48,10 @@ public class Main {
       flag = args[0];
     } catch (ArrayIndexOutOfBoundsException ignored) {
     }
+  }
+
+  static boolean isInvalidFlag() {
+    return !MODES.containsKey(flag);
   }
 
   static void readTasksFromFile() {
@@ -88,20 +91,8 @@ public class Main {
     }
   }
 
-  static void writeToFile() {
-    try {
-      tasks.writeToFile(FILENAME);
-    } catch (CantWriteToFile e) {
-      System.out.println(e.getMessage());
-    }
-  }
-
   static void setModeByFlag() {
     mode = MODES.get(flag);
-  }
-
-  static boolean isInvalidFlag() {
-    return !MODES.containsKey(flag);
   }
 
   static void addTask(String... args) throws TodoException {
@@ -145,6 +136,14 @@ public class Main {
       throw new WrongTodoIndexFormat();
     }
     return taskId;
+  }
+
+  static void writeToFile() {
+    try {
+      tasks.writeToFile(FILENAME);
+    } catch (CantWriteToFile e) {
+      System.out.println(e.getMessage());
+    }
   }
 
   static void removeTask(String... args)
