@@ -68,13 +68,15 @@ public class Tasks {
   }
 
   public void listAllTasks() {
-    if (tasks.isEmpty()) {
-      System.out.println(NO_TODOS_MESSAGE);
-      return;
-    }
+    StringBuilder message = new StringBuilder();
     for (int i = 0; i < tasks.size(); i++) {
-      int taskIndex = i + 1;
-      System.out.println(taskIndex + " - " + tasks.get(i));
+      message.append(String.format("%d - %s\n", i + 1, tasks.get(i).toString()));
+    }
+
+    if (message.length() == 0) {
+      System.out.println(NO_TODOS_MESSAGE);
+    } else {
+      System.out.print(message);
     }
   }
 
