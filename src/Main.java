@@ -87,6 +87,16 @@ public class Main {
     mode = MODES.get(flag);
   }
 
+  static void removeTask(String... args) throws TodoException {
+    int taskId = parseSecondArgumentToTaskId(args);
+    tasks.removeTask(taskId);
+  }
+
+  static void checkTask(String... args) throws TodoException {
+    int taskId = parseSecondArgumentToTaskId(args);
+    tasks.checkTask(taskId);
+  }
+
   static void addTasks(String... args) throws TodoException {
     if (args.length == 1) {
       throw new MissingSecondArgument();
@@ -97,11 +107,6 @@ public class Main {
         System.out.println("\"" + task.getName() + "\" task added");
       }
     }
-  }
-
-  static void checkTask(String... args) throws TodoException {
-    int taskId = parseSecondArgumentToTaskId(args);
-    tasks.checkTask(taskId);
   }
 
   static int parseSecondArgumentToTaskId(String... args) throws TodoException {
@@ -122,11 +127,6 @@ public class Main {
     } catch (CantWriteToFile e) {
       System.out.println(e.getMessage());
     }
-  }
-
-  static void removeTask(String... args) throws TodoException {
-    int taskId = parseSecondArgumentToTaskId(args);
-    tasks.removeTask(taskId);
   }
 
   static void printUsage() {
