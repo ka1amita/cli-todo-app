@@ -62,32 +62,28 @@ public class Main {
     }
   }
 
-  static void act(String[] args) {
+  private static void act(String[] args) {
+    try {
+      tryAct(args);
+    } catch (Exception e) {
+      System.out.printf((e.getMessage()) + "%n", mode);
+    }
+  }
+
+  static void tryAct(String... args) throws TodoException {
     setModeByFlag();
     if (mode.equals("list")) {
       tasks.listNotDoneTasks();
     } else if (mode.equals("listall")) {
       tasks.listAllTasks();
     } else if (mode.equals("remove")) {
-      try {
         removeTask(args);
-      } catch (Exception e) {
-        System.out.printf((e.getMessage()) + "%n", mode);
-      }
       // TODO move to tasks.remove()
     } else if (mode.equals("check")) {
-      try {
         checkTask(args);
-      } catch (Exception e) {
-        System.out.printf((e.getMessage()) + "%n", mode);
-      }
       // TODO move to tasks.add()
     } else if (mode.equals("add")) {
-      try {
         addTask(args);
-      } catch (Exception e) {
-        System.out.printf((e.getMessage()) + "%n", mode);
-      }
     }
   }
 
