@@ -117,7 +117,7 @@ public class Main {
     System.out.printf(TASK_CHECKED_MESSAGE, task.getName());
   }
 
-  static Task getTask(int taskId) throws TodoIndexOutOfBounds {
+  static Task getTask(int taskId) throws TodoException {
     Task task;
     try {
       task = tasks.getAndCheckTask(taskId);
@@ -127,7 +127,7 @@ public class Main {
     return task;
   }
 
-  static int parseSecondArgumentToTaskId(String... args) throws WrongTodoIndexFormat {
+  static int parseSecondArgumentToTaskId(String... args) throws TodoException {
     int taskId;
     try {
       taskId = Integer.parseInt(args[1]);
@@ -156,7 +156,7 @@ public class Main {
     System.out.printf(TASK_REMOVED_MESSAGE, task.getName());
   }
 
-  static Task getAndRemoveTask(int taskId) throws TodoIndexOutOfBounds {
+  static Task getAndRemoveTask(int taskId) throws TodoException {
     Task task;
     try {
       task = tasks.getAndRemoveTask(taskId);
