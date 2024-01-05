@@ -124,7 +124,6 @@ public class Main {
 
     int taskId = parseSecondArgument(args);
     Task task = getTask(taskId);
-    //      tasks.writeToFile(FILENAME);
     System.out.printf(TASK_CHECKED_MESSAGE, task.getName());
   }
 
@@ -157,7 +156,6 @@ public class Main {
     int taskId = parseSecondArgument(args);
     Task task = getAndRemoveTask(taskId);
 
-    //    tasks.writeToFile(FILENAME);
     System.out.printf(TASK_REMOVED_MESSAGE, task.getName());
   }
 
