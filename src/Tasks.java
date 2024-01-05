@@ -79,19 +79,17 @@ public class Tasks {
   }
 
   public void listNotDoneTasks() {
-    if (tasks.isEmpty()) {
-      System.out.println(NO_TODOS_MESSAGE);
-      return;
-    }
-    boolean remainsTodo = false;
+    StringBuilder message = new StringBuilder();
     for (int i = 0; i < tasks.size(); i++) {
       if (!tasks.get(i).isDone()) {
-        System.out.printf("%d - %s\n", i + 1, tasks.get(i).toString());
-        remainsTodo = true;
+        message.append(String.format("%d - %s\n", i + 1, tasks.get(i).toString()));
       }
     }
-    if (!remainsTodo) {
+
+    if (message.length() == 0) {
       System.out.println(NO_TODOS_MESSAGE);
+    } else {
+      System.out.print(message);
     }
   }
 

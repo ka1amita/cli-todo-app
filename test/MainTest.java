@@ -65,6 +65,15 @@ class MainTest {
   }
 
   @Test
+  public void prints_message_when_listing_all_tasks_and_no_task_is_remaining()
+      throws IOException {
+    Main.main("-la");
+
+    assertEquals("No todos for today! :)\n", outputStreamCaptor.toString());
+    assertEquals("", Files.readString(tasksFile.toPath()));
+  }
+
+  @Test
   public void prints_message_when_listing_not_done_tasks_and_only_done_tasks_are_remaining()
       throws IOException {
     Files.writeString(tasksFile.toPath(), "done,true\n");
