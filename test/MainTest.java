@@ -135,6 +135,14 @@ class MainTest {
   }
 
   @Test
+  public void prints_message_when_add_and_argument_is_missing() throws IOException {
+    Main.main("-a");
+
+    assertEquals("Unable to add: no index provided\n", outputStreamCaptor.toString());
+    assertEquals("single,false\n", Files.readString(tasksFile.toPath()));
+  }
+
+  @Test
   public void remove_single_tasks() throws IOException {
     Files.writeString(tasksFile.toPath(), "task,false\n");
     Main.main("-r", "1");
@@ -164,6 +172,15 @@ class MainTest {
   }
 
   @Test
+  public void prints_message_when_remove_and_argument_is_missing() throws IOException {
+    Files.writeString(tasksFile.toPath(), "task,false\n");
+    Main.main("-r");
+
+    assertEquals("Unable to remove: no index provided\n", outputStreamCaptor.toString());
+    assertEquals("task,false\n", Files.readString(tasksFile.toPath()));
+  }
+
+  @Test
   public void check_single_tasks() throws IOException {
     Files.writeString(tasksFile.toPath(), "task,false\n");
     Main.main("-c", "1");
@@ -188,6 +205,15 @@ class MainTest {
     Main.main("-c", "2");
 
     assertEquals("Unable to check: index is out of bound\n", outputStreamCaptor.toString());
+    assertEquals("task,false\n", Files.readString(tasksFile.toPath()));
+  }
+
+  @Test
+  public void prints_message_when_check_and_argument_is_missing() throws IOException {
+    Files.writeString(tasksFile.toPath(), "task,false\n");
+    Main.main("-c");
+
+    assertEquals("Unable to check: no index provided\n", outputStreamCaptor.toString());
     assertEquals("task,false\n", Files.readString(tasksFile.toPath()));
   }
 }
