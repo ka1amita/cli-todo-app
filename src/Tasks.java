@@ -11,6 +11,7 @@ import java.util.List;
 public class Tasks {
   public static final String DELIMITER = ",";
   private static final String NO_TODOS_MESSAGE = "No todos for today! :)";
+  private static final String TASK_REMOVED_MESSAGE = "\"%s\" task removed\n";
   private final List<Task> tasks = new ArrayList<>();
 
   public Tasks(String file) throws CantCreateTodoFile {
@@ -80,12 +81,6 @@ public class Tasks {
     }
   }
 
-  public Task getAndRemoveTask(int i) throws TodoIndexOutOfBounds {
-    Task task = getTask(i);
-    removeTask(i);
-    return task;
-  }
-
   private List<String> parseToContent() {
     List<String> content = new ArrayList<>();
     for (Task task : tasks) {
@@ -98,9 +93,10 @@ public class Tasks {
     tasks.add(task);
   }
 
-  private void removeTask(int taskId) throws TodoIndexOutOfBounds {
+  public void removeTask(int taskId) throws TodoIndexOutOfBounds {
     try {
-      tasks.remove(taskId - 1);
+      Task task = tasks.remove(taskId - 1);
+      System.out.printf(TASK_REMOVED_MESSAGE, task.getName());
     } catch (Exception IndexOutOfBoundsException) {
       throw new TodoIndexOutOfBounds();
     }

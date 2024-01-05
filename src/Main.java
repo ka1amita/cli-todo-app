@@ -21,7 +21,7 @@ public class Main {
     put("--add", "add");
   }};
   private static final String TASK_CHECKED_MESSAGE = "\"%s\" task checked\n";
-  private static final String TASK_REMOVED_MESSAGE = "\"%s\" task removed\n";
+
   static String FILENAME = "tasks.txt";
   private static String flag = "";
   private static String mode = "";
@@ -78,7 +78,6 @@ public class Main {
       tasks.listAllTasks();
     } else if (mode.equals("remove")) {
         removeTask(args);
-      // TODO move to tasks.remove()
     } else if (mode.equals("check")) {
         checkTask(args);
       // TODO move to tasks.add()
@@ -145,11 +144,8 @@ public class Main {
     if (args.length == 1) {
       throw new MissingArgument();
     }
-
     int taskId = parseSecondArgumentToTaskId(args);
-    Task task = tasks.getAndRemoveTask(taskId);
-
-    System.out.printf(TASK_REMOVED_MESSAGE, task.getName());
+    tasks.removeTask(taskId);
   }
 
   static void printUsage() {
