@@ -2,7 +2,6 @@ import exceptions.CantCreateTodoFile;
 import exceptions.CantWriteToFile;
 import exceptions.MissingArgument;
 import exceptions.TodoException;
-import exceptions.TodoIndexOutOfBounds;
 import exceptions.WrongTodoIndexFormat;
 import java.util.HashMap;
 
@@ -20,7 +19,6 @@ public class Main {
     put("-a", "add");
     put("--add", "add");
   }};
-  private static final String TASK_CHECKED_MESSAGE = "\"%s\" task checked\n";
 
   static String FILENAME = "tasks.txt";
   private static String flag = "";
@@ -80,7 +78,6 @@ public class Main {
         removeTask(args);
     } else if (mode.equals("check")) {
         checkTask(args);
-      // TODO move to tasks.add()
     } else if (mode.equals("add")) {
         addTask(args);
     }
@@ -108,18 +105,7 @@ public class Main {
     }
 
     int taskId = parseSecondArgumentToTaskId(args);
-    Task task = getTask(taskId);
-    System.out.printf(TASK_CHECKED_MESSAGE, task.getName());
-  }
-
-  static Task getTask(int taskId) throws TodoException {
-    Task task;
-    try {
-      task = tasks.getAndCheckTask(taskId);
-    } catch (IndexOutOfBoundsException e) {
-      throw new TodoIndexOutOfBounds();
-    }
-    return task;
+    tasks.checkTask(taskId);
   }
 
   static int parseSecondArgumentToTaskId(String... args) throws TodoException {
