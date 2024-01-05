@@ -102,7 +102,7 @@ public class Tasks {
     tasks.add(task);
   }
 
-  public void removeTask(int taskId) throws TodoIndexOutOfBounds {
+  private void removeTask(int taskId) throws TodoIndexOutOfBounds {
     try {
       tasks.remove(taskId - 1);
     } catch (Exception IndexOutOfBoundsException) {
@@ -110,7 +110,7 @@ public class Tasks {
     }
   }
 
-  public Task getTask(int i) throws TodoIndexOutOfBounds {
+  private Task getTask(int i) throws TodoIndexOutOfBounds {
     try {
       return tasks.get(i - 1);
     } catch (Exception IndexOutOfBoundsException) {

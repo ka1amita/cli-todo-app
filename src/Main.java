@@ -34,6 +34,7 @@ public class Main {
       return;
     }
     if (isInvalidFlag()) {
+      // TODO use exception
       System.out.println("Unsupported argument\n");
       printUsage();
       return;
@@ -87,7 +88,7 @@ public class Main {
     }
   }
 
-  private static void writeToFile() {
+  static void writeToFile() {
     try {
       tasks.writeToFile(FILENAME);
     } catch (CantWriteToFile e) {
@@ -95,11 +96,11 @@ public class Main {
     }
   }
 
-  private static void setModeByFlag() {
+  static void setModeByFlag() {
     mode = MODES.get(flag);
   }
 
-  private static boolean isInvalidFlag() {
+  static boolean isInvalidFlag() {
     return !MODES.containsKey(flag);
   }
 
@@ -115,7 +116,7 @@ public class Main {
     }
   }
 
-  private static void checkTask(String... args)
+  static void checkTask(String... args)
       throws TodoException {
     if (args.length == 1) {
       throw new MissingArgument();
@@ -127,7 +128,7 @@ public class Main {
     System.out.printf(TASK_CHECKED_MESSAGE, task.getName());
   }
 
-  private static Task getTask(int taskId) throws TodoIndexOutOfBounds {
+  static Task getTask(int taskId) throws TodoIndexOutOfBounds {
     Task task;
     try {
       task = tasks.getAndCheckTask(taskId);
@@ -137,7 +138,7 @@ public class Main {
     return task;
   }
 
-  private static int parseSecondArgument(String... args) throws WrongTodoIndexFormat {
+  static int parseSecondArgument(String... args) throws WrongTodoIndexFormat {
     int taskId;
     try {
       taskId = Integer.parseInt(args[1]);
@@ -160,7 +161,7 @@ public class Main {
     System.out.printf(TASK_REMOVED_MESSAGE, task.getName());
   }
 
-  private static Task getAndRemoveTask(int taskId) throws TodoIndexOutOfBounds {
+  static Task getAndRemoveTask(int taskId) throws TodoIndexOutOfBounds {
     Task task;
     try {
       task = tasks.getAndRemoveTask(taskId);
