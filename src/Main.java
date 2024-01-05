@@ -75,9 +75,9 @@ public class Main {
     } else if (mode.equals("listall")) {
       tasks.listAllTasks();
     } else if (mode.equals("remove")) {
-        removeTask(args);
+      removeTask(args);
     } else if (mode.equals("check")) {
-        checkTask(args);
+      checkTask(args);
     } else if (mode.equals("add")) {
       addTasks(args);
     }
