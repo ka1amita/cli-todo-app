@@ -113,7 +113,7 @@ public class Main {
       throw new MissingArgument();
     }
 
-    int taskId = parseSecondArgument(args);
+    int taskId = parseSecondArgumentToTaskId(args);
     Task task = getTask(taskId);
     System.out.printf(TASK_CHECKED_MESSAGE, task.getName());
   }
@@ -128,7 +128,7 @@ public class Main {
     return task;
   }
 
-  static int parseSecondArgument(String... args) throws WrongTodoIndexFormat {
+  static int parseSecondArgumentToTaskId(String... args) throws WrongTodoIndexFormat {
     int taskId;
     try {
       taskId = Integer.parseInt(args[1]);
@@ -152,7 +152,7 @@ public class Main {
       throw new MissingArgument();
     }
 
-    int taskId = parseSecondArgument(args);
+    int taskId = parseSecondArgumentToTaskId(args);
     Task task = getAndRemoveTask(taskId);
 
     System.out.printf(TASK_REMOVED_MESSAGE, task.getName());
