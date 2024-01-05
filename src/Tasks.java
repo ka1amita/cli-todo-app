@@ -4,7 +4,6 @@ import exceptions.TodoIndexOutOfBounds;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +14,11 @@ public class Tasks {
   private static final String TASK_CHECKED_MESSAGE = "\"%s\" task checked\n";
   private static final String TASK_ADDED_MESSAGE = "\"%s\" task added\n";
   private final List<Task> tasks = new ArrayList<>();
+  private final Path sourceFile;
 
-  public Tasks(String file) throws CantCreateTodoFile {
-    readFromOrCreateFile(file);
+  public Tasks(String filename) throws CantCreateTodoFile {
+    this.sourceFile = Path.of(filename);
+    readFromOrCreateFile();
   }
 
   private static List<String> readTasksFromFile(Path path) {
@@ -40,29 +41,27 @@ public class Tasks {
     }
   }
 
-  private static void createFile(Path path) throws CantCreateTodoFile {
+  private void createFile() throws CantCreateTodoFile {
     try {
-      Files.createFile(path);
+      Files.createFile(sourceFile);
     } catch (IOException e) {
       throw new CantCreateTodoFile();
     }
     System.out.println("new file created");
   }
 
-  public void readFromOrCreateFile(String filename) throws CantCreateTodoFile {
-    Path path = Paths.get(filename);
-
-    if (!Files.exists(path)) {
-      System.out.println("Todo file not found, creating new file");
-      createFile(path);
+  public void readFromOrCreateFile() throws CantCreateTodoFile {
+    if (!Files.exists(sourceFile)) {
+      System.out.println("Source file not found, creating new file");
+      createFile();
     } else {
-      readTasks(path);
+      readTasksFromFile();
     }
   }
 
-  private void readTasks(Path path) {
+  private void readTasksFromFile() {
     List<String> content;
-    content = readTasksFromFile(path);
+    content = readTasksFromFile(sourceFile);
     if (content == null) {
       return;
     }
@@ -72,12 +71,11 @@ public class Tasks {
     }
   }
 
-  public void writeToFile(String file) throws CantWriteToFile {
-    Path path = Paths.get(file);
+  public void writeToFile() throws CantWriteToFile {
     List<String> content = parseToContent();
 
     try {
-      Files.write(path, content);
+      Files.write(sourceFile, content);
     } catch (IOException e) {
       throw new CantWriteToFile();
     }

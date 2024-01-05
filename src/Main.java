@@ -114,7 +114,7 @@ public class Main {
 
   static void writeToFile() {
     try {
-      tasks.writeToFile(FILENAME);
+      tasks.writeToFile();
     } catch (CantWriteToFile e) {
       System.out.println(e.getMessage());
     }

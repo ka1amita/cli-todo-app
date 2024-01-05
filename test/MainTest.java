@@ -22,7 +22,7 @@ class MainTest {
       + " -c  --check    Completes a task\n";
   private final PrintStream standardOut = System.out;
   private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-  private File tasksFile = new File("test", "tasks.txt");
+  private final File tasksFile = new File("test", "tasks.txt");
 
 
   @BeforeEach
@@ -38,6 +38,16 @@ class MainTest {
     tasksFile.delete();
   }
 
+  @Test
+  public void creates_file_when_tasked_with_access_task_and_file_is_missing() throws IOException {
+    tasksFile.delete();
+    Main.main("-l");
+    String expected = "Source file not found, creating new file\n"
+        + "new file created\n"
+        + "No todos for today! :)\n";
+    assertEquals(expected, outputStreamCaptor.toString());
+    assertEquals("", Files.readString(tasksFile.toPath()));
+  }
   @Test
   public void print_help_message_when_no_argument_provided() throws IOException {
     Main.main("");
