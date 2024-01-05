@@ -13,10 +13,6 @@ public class Tasks {
   private static final String NO_TODOS_MESSAGE = "No todos for today! :)";
   private final List<Task> tasks = new ArrayList<>();
 
-  public Tasks(List<Task> tasks) {
-    this.tasks.addAll(tasks);
-  }
-
   public Tasks(String file) throws CantCreateTodoFile {
     readFromOrCreateFile(file);
   }
