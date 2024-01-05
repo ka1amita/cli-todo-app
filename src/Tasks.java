@@ -33,14 +33,11 @@ public class Tasks {
     return content;
   }
 
-  public void readFromOrCreateFile(String filename) throws CantCreateTodoFile {
-    Path path = Paths.get(filename);
-
-    if (!Files.exists(path)) {
-      System.out.println("Todo file not found, creating new file");
-      createFile(path);
+  private static void printListOrNoTodosMessage(StringBuilder message) {
+    if (message.length() == 0) {
+      System.out.println(NO_TODOS_MESSAGE);
     } else {
-      readTasks(path);
+      System.out.print(message);
     }
   }
 
@@ -51,6 +48,17 @@ public class Tasks {
       throw new CantCreateTodoFile();
     }
     System.out.println("new file created");
+  }
+
+  public void readFromOrCreateFile(String filename) throws CantCreateTodoFile {
+    Path path = Paths.get(filename);
+
+    if (!Files.exists(path)) {
+      System.out.println("Todo file not found, creating new file");
+      createFile(path);
+    } else {
+      readTasks(path);
+    }
   }
 
   private void readTasks(Path path) {
@@ -67,11 +75,7 @@ public class Tasks {
 
   public void writeToFile(String file) throws CantWriteToFile {
     Path path = Paths.get(file);
-    List<String> content = new ArrayList<>();
-
-    for (Task task : tasks) {
-      content.add(String.join(DELIMITER, task.getName(), String.valueOf(task.isDone())));
-    }
+    List<String> content = parseToContent();
 
     try {
       Files.write(path, content);
@@ -86,12 +90,12 @@ public class Tasks {
     return task;
   }
 
-  public Task getTask(int i) throws TodoIndexOutOfBounds {
-    try {
-      return tasks.get(i - 1);
-    } catch (Exception IndexOutOfBoundsException) {
-      throw new TodoIndexOutOfBounds();
+  private List<String> parseToContent() {
+    List<String> content = new ArrayList<>();
+    for (Task task : tasks) {
+      content.add(String.join(DELIMITER, task.getName(), String.valueOf(task.isDone())));
     }
+    return content;
   }
 
   public void add(Task task) {
@@ -101,6 +105,14 @@ public class Tasks {
   public void removeTask(int taskId) throws TodoIndexOutOfBounds {
     try {
       tasks.remove(taskId - 1);
+    } catch (Exception IndexOutOfBoundsException) {
+      throw new TodoIndexOutOfBounds();
+    }
+  }
+
+  public Task getTask(int i) throws TodoIndexOutOfBounds {
+    try {
+      return tasks.get(i - 1);
     } catch (Exception IndexOutOfBoundsException) {
       throw new TodoIndexOutOfBounds();
     }
@@ -124,14 +136,6 @@ public class Tasks {
     }
 
     printListOrNoTodosMessage(message);
-  }
-
-  private static void printListOrNoTodosMessage(StringBuilder message) {
-    if (message.length() == 0) {
-      System.out.println(NO_TODOS_MESSAGE);
-    } else {
-      System.out.print(message);
-    }
   }
 
   public Task getAndCheckTask(int taskId) throws TodoIndexOutOfBounds {
