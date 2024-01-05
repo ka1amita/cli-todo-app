@@ -13,6 +13,7 @@ public class Tasks {
   private static final String NO_TODOS_MESSAGE = "No todos for today! :)";
   private static final String TASK_REMOVED_MESSAGE = "\"%s\" task removed\n";
   private static final String TASK_CHECKED_MESSAGE = "\"%s\" task checked\n";
+  private static final String TASK_ADDED_MESSAGE = "\"%s\" task added\n";
   private final List<Task> tasks = new ArrayList<>();
 
   public Tasks(String file) throws CantCreateTodoFile {
@@ -92,6 +93,7 @@ public class Tasks {
 
   public void addTask(Task task) {
     tasks.add(task);
+    System.out.printf(TASK_ADDED_MESSAGE, task.getName());
   }
 
   public void removeTask(int taskId) throws TodoIndexOutOfBounds {

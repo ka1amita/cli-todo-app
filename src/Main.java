@@ -96,7 +96,6 @@ public class Main {
       for (int i = 1; i < args.length; i++) {
         Task task = new Task(args[i]);
         tasks.addTask(task);
-        System.out.println("\"" + task.getName() + "\" task added");
       }
     }
   }
