@@ -22,15 +22,14 @@ public class Task {
 
   @Override
   public String toString() {
-    // use string builder
-    String string = "";
+    StringBuilder string = new StringBuilder();
     if (this.isDone()) {
-      string += "[x]";
+      string.append("[x]");
     } else {
-      string += "[ ]";
+      string.append("[ ]");
     }
-    string += " " + this.getName();
-    return string;
+    string.append(" ").append(this.getName());
+    return string.toString();
   }
 
   public void setDone() {
