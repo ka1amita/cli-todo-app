@@ -151,19 +151,9 @@ public class Main {
     }
 
     int taskId = parseSecondArgumentToTaskId(args);
-    Task task = getAndRemoveTask(taskId);
+    Task task = tasks.getAndRemoveTask(taskId);
 
     System.out.printf(TASK_REMOVED_MESSAGE, task.getName());
-  }
-
-  static Task getAndRemoveTask(int taskId) throws TodoException {
-    Task task;
-    try {
-      task = tasks.getAndRemoveTask(taskId);
-      } catch (IndexOutOfBoundsException e) {
-      throw new TodoIndexOutOfBounds();
-    }
-    return task;
   }
 
   static void printUsage() {
