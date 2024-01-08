@@ -23,4 +23,4 @@ cd - || exit
 chmod u+x $targetDir/$jarName
 
 echo "run with:"
-echo "java -jar $targetDir/cli-todo-app.jar"
+echo "java -jar $targetDir/cli-todo-app.jar <commands>"
