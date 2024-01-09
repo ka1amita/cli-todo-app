@@ -20,7 +20,6 @@ public class Todo {
                                                   new ListAllActor(),
                                                   new ListActor());
   private String flag = "";
-  private String mode = "";
   protected final String filename;
   private Tasks tasks;
   private Actor actor;
@@ -51,7 +50,7 @@ public class Todo {
       System.out.format(e.getMessage(), args[0]);
       printUsage();
     } catch (TodoException e) {
-      System.out.printf(e.getMessage(), mode);
+      System.out.format(e.getMessage());
     }
     return false;
   }
