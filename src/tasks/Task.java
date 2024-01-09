@@ -1,3 +1,5 @@
+package tasks;
+
 public class Task {
 
   private final String name;
@@ -21,6 +23,10 @@ public class Task {
     return done;
   }
 
+  public void setDone() {
+    done = true;
+  }
+
   @Override
   public String toString() {
     StringBuilder string = new StringBuilder();
@@ -31,9 +37,5 @@ public class Task {
     }
     string.append(" ").append(this.getName());
     return string.toString();
-  }
-
-  public void setDone() {
-    done = true;
   }
 }

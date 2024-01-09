@@ -1,4 +1,7 @@
+package tasks;
+
 import exceptions.CantCreateTodoFile;
+import exceptions.CantReadFromFile;
 import exceptions.CantWriteToFile;
 import exceptions.TodoIndexOutOfBounds;
 import java.io.IOException;
@@ -16,19 +19,17 @@ public class Tasks {
   private final List<Task> tasks = new ArrayList<>();
   private final Path sourceFile;
 
-  public Tasks(String filename) throws CantCreateTodoFile {
+  public Tasks(String filename) throws CantCreateTodoFile, CantReadFromFile {
     this.sourceFile = Path.of(filename);
     readFromOrCreateFile();
   }
 
-  private static List<String> readTasksFromFile(Path path) {
+  private static List<String> readTasksFromFile(Path path) throws CantReadFromFile {
     List<String> content;
     try {
       content = Files.readAllLines(path);
     } catch (IOException e) {
-      System.out.println("can't read from file");
-      return null;
-      // TODO throw custom exception instead!
+      throw new CantReadFromFile();
     }
     return content;
   }
@@ -50,7 +51,7 @@ public class Tasks {
     System.out.println("new file created");
   }
 
-  public void readFromOrCreateFile() throws CantCreateTodoFile {
+  public void readFromOrCreateFile() throws CantCreateTodoFile, CantReadFromFile {
     if (!Files.exists(sourceFile)) {
       System.out.println("Source file not found, creating new file");
       createFile();
@@ -59,12 +60,10 @@ public class Tasks {
     }
   }
 
-  private void readTasksFromFile() {
+  private void readTasksFromFile() throws CantReadFromFile {
     List<String> content;
     content = readTasksFromFile(sourceFile);
-    if (content == null) {
-      return;
-    }
+
     for (String line : content) {
       String[] split = line.split(DELIMITER);
       this.tasks.add(new Task(split[0], Boolean.parseBoolean(split[1])));
