@@ -1,55 +1,115 @@
+import actors.CheckActor;
+import actors.ListActor;
+import actors.ListAllActor;
+import actors.RemoveActor;
+import tasks.Tasks;
+import actors.Actor;
+import actors.AddActor;
 import exceptions.CantCreateTodoFile;
 import exceptions.CantWriteToFile;
-import exceptions.MissingSecondArgument;
+import exceptions.MissingTodoFlag;
 import exceptions.TodoException;
-import exceptions.WrongTodoIndexFormat;
-import java.util.HashMap;
+import exceptions.UnsupportedTodoOperation;
+import exceptions.UnsupportedTodoAgument;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Main {
-
-  private static final HashMap<String, String> MODES = new HashMap<>() {{
-    put("-l", "list");
-    put("--list", "list");
-    put("-la", "listall");
-    put("--listall", "listall");
-    put("-r", "remove");
-    put("--remove", "remove");
-    put("-c", "check");
-    put("--check", "check");
-    put("-a", "add");
-    put("--add", "add");
-  }};
 
   static String FILENAME = "tasks.txt";
   private static String flag = "";
   private static String mode = "";
   private static Tasks tasks;
+  private static Set<Actor> actors = new HashSet<>();
+  private static Actor actor;
+  private static String[] args;
 
-  public static void main(String... args) {
-    parseFlag(args);
-    if (flag.isEmpty()) {
-      printUsage();
+  public static void main(String... input) {
+    args = input;
+    populateActors();
+
+    if (!parseFlag()) {
       return;
     }
-    if (isInvalidFlag()) {
-      System.out.println("Unsupported argument\n");
-      printUsage();
+    if (!setActorFromFlag()) {
       return;
     }
+
     readTasksFromFile();
-    act(args);
+
+    act();
+
     writeToFile();
   }
 
-  static void parseFlag(String[] args) {
+  private static boolean setActorFromFlag() {
     try {
-      flag = args[0];
-    } catch (ArrayIndexOutOfBoundsException ignored) {
+      trySetActorFromFlag();
+      return true;
+    } catch (UnsupportedTodoOperation e) {
+      System.out.format(e.getMessage(), args[0]);
+      printUsage();
+    } catch (TodoException e) {
+      System.out.printf(e.getMessage(), mode);
+    }
+    return false;
+  }
+
+  private static boolean parseFlag() {
+    try {
+      tryParseFlag();
+      return true;
+    } catch (UnsupportedTodoAgument e) {
+      System.out.format(e.getMessage());
+      System.out.println();
+      System.out.println();
+      printUsage();
+      return false;
+    } catch (TodoException e) {
+      printUsage();
+      return false;
     }
   }
 
-  static boolean isInvalidFlag() {
-    return !MODES.containsKey(flag);
+  private static void act() {
+    try {
+      actor.act(tasks);
+    } catch (TodoException e) {
+      System.out.format(e.getMessage(), actor.getType());
+      System.out.println();
+    }
+  }
+
+  private static void populateActors() {
+    actors.add(new AddActor());
+    actors.add(new RemoveActor());
+    actors.add(new CheckActor());
+    actors.add(new ListAllActor());
+    actors.add(new ListActor());
+  }
+
+  static void tryParseFlag() throws TodoException {
+    String flagArgument;
+    flagArgument = args[0];
+
+    if (flagArgument.isEmpty()) {
+      throw new MissingTodoFlag();
+    }
+    if (flagArgument.startsWith("--")) {
+      flag = args[0].substring(2);
+    } else if (flagArgument.startsWith("-")) {
+      flag = args[0].substring(1, 2);
+    } else {
+      throw new UnsupportedTodoAgument();
+    }
+  }
+
+  static void trySetActorFromFlag() throws TodoException {
+    actor = actors.stream()
+        .filter(a -> a.getShortFlag().equals(flag) || a.getLongFlag().contentEquals(flag))
+        .findFirst()
+        .orElseThrow(UnsupportedTodoOperation::new);
+    actor.setArgument(args);
   }
 
   static void readTasksFromFile() {
@@ -58,58 +118,6 @@ public class Main {
     } catch (CantCreateTodoFile e) {
       System.out.println(e.getMessage());
     }
-  }
-
-  private static void act(String... args) {
-    try {
-      tryAct(args);
-    } catch (Exception e) {
-      System.out.printf((e.getMessage()) + "%n", mode);
-    }
-  }
-
-  static void tryAct(String... args) throws TodoException {
-    setModeByFlag();
-    if (mode.equals("list")) {
-      tasks.listNotDoneTasks();
-    } else if (mode.equals("listall")) {
-      tasks.listAllTasks();
-    } else if (mode.equals("remove")) {
-      int taskId = parseSecondArgumentToTaskId(args);
-      tasks.removeTask(taskId);
-    } else if (mode.equals("check")) {
-      int taskId = parseSecondArgumentToTaskId(args);
-      tasks.checkTask(taskId);
-    } else if (mode.equals("add")) {
-      addTasks(args);
-    }
-  }
-
-  static void setModeByFlag() {
-    mode = MODES.get(flag);
-  }
-
-  static void addTasks(String... args) throws TodoException {
-    if (args.length == 1) {
-      throw new MissingSecondArgument();
-    } else {
-      for (int i = 1; i < args.length; i++) {
-        Task task = new Task(args[i]);
-        tasks.addTask(task);
-      }
-    }
-  }
-
-  static int parseSecondArgumentToTaskId(String... args) throws TodoException {
-    int taskId;
-    try {
-      taskId = Integer.parseInt(args[1]);
-    } catch (NumberFormatException e) {
-      throw new WrongTodoIndexFormat();
-    } catch (IndexOutOfBoundsException e) {
-      throw new MissingSecondArgument();
-    }
-    return taskId;
   }
 
   static void writeToFile() {
@@ -121,14 +129,17 @@ public class Main {
   }
 
   static void printUsage() {
-    System.out.println("Command Line Todo application\n"
-                           + "=============================\n"
-                           + "\n"
-                           + "Command line arguments:\n"
-                           + " -l  --list     Lists undone tasks\n"
-                           + " -la --listall  Lists all tasks\n"
-                           + " -a  --add      Adds a new task\n"
-                           + " -r  --remove   Removes a task\n"
-                           + " -c  --check    Completes a task");
+    String prefix = "Command Line Todo application\n"
+        + "=============================\n"
+        + "\n"
+        + "Command line arguments:\n";
+
+    StringBuilder usage = new StringBuilder(prefix);
+
+    for (Actor actor : actors) {
+      usage.append(actor.getUsage()).append("\n");
+    }
+
+    System.out.print(usage);
   }
 }
