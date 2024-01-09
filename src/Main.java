@@ -5,7 +5,6 @@ import actors.RemoveActor;
 import tasks.Tasks;
 import actors.Actor;
 import actors.AddActor;
-import exceptions.CantCreateTodoFile;
 import exceptions.CantWriteToFile;
 import exceptions.MissingTodoFlag;
 import exceptions.TodoException;
@@ -27,18 +26,14 @@ public class Main {
   public static void main(String... input) {
     args = input;
     populateActors();
-
     if (!parseFlag()) {
       return;
     }
     if (!setActorFromFlag()) {
       return;
     }
-
     readTasksFromFile();
-
     act();
-
     writeToFile();
   }
 
@@ -115,7 +110,7 @@ public class Main {
   static void readTasksFromFile() {
     try {
       tasks = new Tasks(FILENAME);
-    } catch (CantCreateTodoFile e) {
+    } catch (TodoException e) {
       System.out.println(e.getMessage());
     }
   }
