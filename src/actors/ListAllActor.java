@@ -5,7 +5,7 @@ import tasks.Tasks;
 public class ListAllActor extends Actor {
 
   public ListAllActor() {
-    super("list all",
+    super("LISTALL",
           "L",
           "listall",
           "Lists all tasks");

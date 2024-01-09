@@ -23,7 +23,7 @@ class MainTest {
   public void setUp() throws IOException {
     System.setOut(new PrintStream(outputStreamCaptor));
     tasksFile.createNewFile();
-    Main.filename = new File("test", "tasks.txt").toString();
+    Main.FILENAME = new File("test", "tasks.txt").toString();
   }
 
   @AfterEach
