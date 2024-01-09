@@ -18,13 +18,16 @@ public class Main {
   private static String flag = "";
   private static String mode = "";
   private static Tasks tasks;
-  private static Set<Actor> actors = new HashSet<>();
+  private static final Set<Actor> ACTORS = Set.of(new AddActor(),
+                                                  new RemoveActor(),
+                                                  new CheckActor(),
+                                                  new ListAllActor(),
+                                                  new ListActor());
   private static Actor actor;
   private static String[] args;
 
   public static void main(String... input) {
     args = input;
-    populateActors();
     if (!parseFlag()) {
       return;
     }
@@ -72,14 +75,6 @@ public class Main {
       System.out.format(e.getMessage(), actor.getType());
       System.out.println();
     }
-  }
-
-  private static void populateActors() {
-    actors.add(new AddActor());
-    actors.add(new RemoveActor());
-    actors.add(new CheckActor());
-    actors.add(new ListAllActor());
-    actors.add(new ListActor());
   }
 
   static void tryParseFlag() throws TodoException {
