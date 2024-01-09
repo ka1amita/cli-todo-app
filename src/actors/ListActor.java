@@ -5,7 +5,7 @@ import tasks.Tasks;
 public class ListActor extends Actor {
 
   public ListActor() {
-    super("LIST",
+    super("list",
           "l",
           "list",
           "Lists undone tasks");
