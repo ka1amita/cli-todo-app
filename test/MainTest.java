@@ -42,6 +42,18 @@ class MainTest {
     assertEquals(expected, outputStreamCaptor.toString());
     assertEquals("", Files.readString(tasksFile.toPath()));
   }
+
+  @Test
+  public void print_usage_message_when_no_input_provided() throws IOException {
+    Main.main();
+    assertTrue(outputStreamCaptor.toString().contains(" -L  --  listall     Lists all tasks\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -l  --     list     Lists undone tasks\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -r  --   remove     Removes a task\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -c  --    check     Check a task\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -a  --      add     Adds a new task\n"));
+    assertEquals("", Files.readString(tasksFile.toPath()));
+  }
+
   @Test
   public void print_usage_message_when_no_argument_provided() throws IOException {
     Main.main("");
@@ -57,6 +69,34 @@ class MainTest {
   public void print_message_followed_by_usage_message_when_wrong_argument_provided()
       throws IOException {
     Main.main("wrong");
+
+    assertTrue(outputStreamCaptor.toString().startsWith("Unsupported argument\n\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -L  --  listall     Lists all tasks\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -l  --     list     Lists undone tasks\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -r  --   remove     Removes a task\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -c  --    check     Check a task\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -a  --      add     Adds a new task\n"));
+    assertEquals("", Files.readString(tasksFile.toPath()));
+  }
+
+  @Test
+  public void print_message_followed_by_usage_message_when_only_single_hyphen_provided()
+      throws IOException {
+    Main.main("-");
+
+    assertTrue(outputStreamCaptor.toString().startsWith("Unsupported argument\n\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -L  --  listall     Lists all tasks\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -l  --     list     Lists undone tasks\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -r  --   remove     Removes a task\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -c  --    check     Check a task\n"));
+    assertTrue(outputStreamCaptor.toString().contains(" -a  --      add     Adds a new task\n"));
+    assertEquals("", Files.readString(tasksFile.toPath()));
+  }
+
+  @Test
+  public void print_message_followed_by_usage_message_when_only_two_hyphens_provided()
+      throws IOException {
+    Main.main("--");
 
     assertTrue(outputStreamCaptor.toString().startsWith("Unsupported argument\n\n"));
     assertTrue(outputStreamCaptor.toString().contains(" -L  --  listall     Lists all tasks\n"));
