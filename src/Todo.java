@@ -19,15 +19,15 @@ public class Todo {
                                                   new CheckActor(),
                                                   new ListAllActor(),
                                                   new ListActor());
-  protected final String FILENAME;
   private String flag = "";
   private String mode = "";
+  protected final String filename;
   private Tasks tasks;
   private Actor actor;
   private String[] args;
 
   public Todo(String filename) {
-    FILENAME = filename;
+    this.filename = filename;
   }
 
   public void run(String... input) {
@@ -113,7 +113,7 @@ public class Todo {
 
   void readTasksFromFile() {
     try {
-      tasks = new Tasks(FILENAME);
+      tasks = new Tasks(filename);
     } catch (TodoException e) {
       System.out.println(e.getMessage());
     }
