@@ -19,7 +19,7 @@ public class Todo {
                                                   new CheckActor(),
                                                   new ListAllActor(),
                                                   new ListActor());
-  private String flag = "";
+  private String flag;
   protected final String filename;
   private Tasks tasks;
   private Actor actor;
