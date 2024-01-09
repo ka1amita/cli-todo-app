@@ -10,7 +10,6 @@ import exceptions.MissingTodoFlag;
 import exceptions.TodoException;
 import exceptions.UnsupportedTodoOperation;
 import exceptions.UnsupportedTodoAgument;
-import java.util.HashSet;
 import java.util.Set;
 
 public class Main {
@@ -85,22 +84,29 @@ public class Main {
 
   static void tryParseFlag() throws TodoException {
     String flagArgument;
-    flagArgument = args[0];
+    flagArgument = readFirstArgument();
+    parseFlagArgument(flagArgument);
+  }
 
-    if (flagArgument.isEmpty()) {
+  private static String readFirstArgument() throws MissingTodoFlag {
+    if (args.length == 0 || args[0].isEmpty()) {
       throw new MissingTodoFlag();
     }
-    if (flagArgument.startsWith("--")) {
-      flag = args[0].substring(2);
-    } else if (flagArgument.startsWith("-")) {
-      flag = args[0].substring(1, 2);
+    return args[0];
+  }
+
+  private static void parseFlagArgument(String flagArgument) throws UnsupportedTodoAgument {
+    if (flagArgument.matches("--\\w+")) {
+      flag = flagArgument.substring(2);
+    } else if (flagArgument.matches("-\\w+")) {
+      flag = flagArgument.substring(1, 2);
     } else {
       throw new UnsupportedTodoAgument();
     }
   }
 
   static void trySetActorFromFlag() throws TodoException {
-    actor = actors.stream()
+    actor = ACTORS.stream()
         .filter(a -> a.getShortFlag().equals(flag) || a.getLongFlag().contentEquals(flag))
         .findFirst()
         .orElseThrow(UnsupportedTodoOperation::new);
@@ -131,7 +137,7 @@ public class Main {
 
     StringBuilder usage = new StringBuilder(prefix);
 
-    for (Actor actor : actors) {
+    for (Actor actor : ACTORS) {
       usage.append(actor.getUsage()).append("\n");
     }
 
